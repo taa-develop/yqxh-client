@@ -1,26 +1,32 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React from 'react'
+import { gql } from 'apollo-boost'
+import { useQuery } from '@apollo/react-hooks'
+import { Switch, Route, Redirect } from 'react-router-dom'
+
+import Login from './view/Login'
+import Main from './view/Main'
+
+const GET_LOAIN_STATUS = gql`
+    {
+        isLogin @client
+    }
+`
 
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+    const {
+        data: { isLogin }
+    } = useQuery(GET_LOAIN_STATUS)
+    return (
+        <Switch>
+            <Route path="/login">
+                {!isLogin ? <Login /> : <Redirect to="/" />}
+                <Login />
+            </Route>
+            <Route path="/">
+                {isLogin ? <Main /> : <Redirect to="/login" />}
+            </Route>
+        </Switch>
+    )
 }
 
-export default App;
+export default App
